@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <handling_fee>
+            <general>
+                <enabled>1</enabled>
+                <rate_percent>7</rate_percent>
+                <exempt_subtotal_threshold>50000</exempt_subtotal_threshold>
+                <exempt_customer_groups>3</exempt_customer_groups>
+                <label>Handling Fee</label>
+                <sort_order>710</sort_order>
+            </general>
+        </handling_fee>
+    </default>
+</config>

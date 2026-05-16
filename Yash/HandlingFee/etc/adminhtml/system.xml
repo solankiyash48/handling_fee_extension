@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="yash" translate="label" sortOrder="400">
+            <label>Yash Modules</label>
+        </tab>
+        <section id="handling_fee" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Handling Fee</label>
+            <tab>yash</tab>
+            <resource>Yash_HandlingFee::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Settings</label>
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Handling Fee</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="rate_percent" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Rate (%)</label>
+                    <comment>Percentage of cart subtotal charged as handling fee. Default: 7</comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="exempt_subtotal_threshold" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Subtotal Exemption Threshold</label>
+                    <comment>Orders with a subtotal strictly greater than this value are exempt. In base currency. Default: 50000</comment>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="exempt_customer_groups" translate="label comment" type="multiselect" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Exempt Customer Groups</label>
+                    <comment>Customer groups exempt from the handling fee (e.g., Wholesale).</comment>
+                    <source_model>Magento\Customer\Model\Config\Source\Group\Multiselect</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="label" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Display Label</label>
+                    <comment>Label shown to customers (cart, checkout, order summaries).</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <type name="Magento\Quote\Api\CartTotalRepositoryInterface">
+        <plugin name="yash_handlingfee_cart_totals"
+                type="Yash\HandlingFee\Plugin\CartTotalRepositoryPlugin"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Sales\Api\OrderRepositoryInterface">
+        <plugin name="yash_handlingfee_order_repository"
+                type="Yash\HandlingFee\Plugin\OrderRepositoryPlugin"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Quote\Model\Cart\TotalsConverter">
+        <plugin name="yash_handlingfee_total_segment"
+                type="Yash\HandlingFee\Plugin\TotalsConverterPlugin"
+                sortOrder="10"/>
+    </type>
+
+    <type name="Magento\Checkout\CustomerData\Cart">
+        <plugin name="yash_handlingfee_minicart_section"
+                type="Yash\HandlingFee\CustomerData\CartPlugin"
+                sortOrder="10"/>
+    </type>
+</config>

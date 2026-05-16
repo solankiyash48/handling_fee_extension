@@ -1,0 +1,28 @@
+{
+    "name": "yash/module-handling-fee",
+    "description": "Adds a configurable handling fee to the Magento 2 quote/order with exemptions and full API/UI exposure.",
+    "type": "magento2-module",
+    "license": [
+        "OSL-3.0",
+        "AFL-3.0"
+    ],
+    "version": "1.0.0",
+    "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0",
+        "magento/framework": "*",
+        "magento/module-quote": "*",
+        "magento/module-sales": "*",
+        "magento/module-checkout": "*",
+        "magento/module-customer": "*",
+        "magento/module-store": "*",
+        "magento/module-config": "*"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "Yash\\HandlingFee\\": ""
+        }
+    }
+}

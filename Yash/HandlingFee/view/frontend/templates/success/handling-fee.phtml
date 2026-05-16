@@ -1,0 +1,11 @@
+<?php
+/** @var \Yash\HandlingFee\Block\Success\HandlingFee $block */
+?>
+<?php if ($block->isVisible()): ?>
+    <div class="checkout-success-handling-fee">
+        <p>
+            <strong><?= $block->escapeHtml($block->getLabel()) ?>:</strong>
+            <span class="price"><?= $block->escapeHtml($block->getFormattedFee()) ?></span>
+        </p>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/layout_generic.xsd">
+    <referenceBlock name="totals">
+        <block class="Yash\HandlingFee\Block\Adminhtml\Order\Create\Totals\HandlingFee"
+               name="totals.handling_fee"
+               before="totals_grand"/>
+    </referenceBlock>
+</layout>

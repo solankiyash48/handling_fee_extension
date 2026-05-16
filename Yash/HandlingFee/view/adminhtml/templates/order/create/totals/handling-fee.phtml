@@ -1,0 +1,13 @@
+<?php
+/** @var \Yash\HandlingFee\Block\Adminhtml\Order\Create\Totals\HandlingFee $block */
+?>
+<?php if ($block->isVisible()): ?>
+    <tr>
+        <td class="admin__total-mark" colspan="<?= (int) $block->getColspan() ?>">
+            <strong><?= $block->escapeHtml($block->getLabel()) ?></strong>
+        </td>
+        <td class="admin__total-amount">
+            <span><?= $block->escapeHtml($block->getFormattedValue()) ?></span>
+        </td>
+    </tr>
+<?php endif; ?>

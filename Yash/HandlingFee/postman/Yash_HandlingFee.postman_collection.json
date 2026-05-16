@@ -1,0 +1,171 @@
+{
+  "info": {
+    "name": "Yash_HandlingFee",
+    "_postman_id": "yash-handlingfee-collection-001",
+    "description": "End-to-end verification of the Yash_HandlingFee Magento 2 module. Run the requests in order. Set `base_url` and `customer_email`/`customer_password` (or `admin_token`) in the collection variables.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",          "value": "http://magento.local",          "type": "string" },
+    { "key": "admin_user",        "value": "admin",                          "type": "string" },
+    { "key": "admin_password",    "value": "admin123",                       "type": "string" },
+    { "key": "customer_email",    "value": "retail@example.com",             "type": "string" },
+    { "key": "customer_password", "value": "Password1!",                     "type": "string" },
+    { "key": "product_sku",       "value": "24-MB01",                        "type": "string" },
+    { "key": "customer_token",    "value": "",                               "type": "string" },
+    { "key": "admin_token",       "value": "",                               "type": "string" },
+    { "key": "quote_id",          "value": "",                               "type": "string" },
+    { "key": "order_id",          "value": "",                               "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "0. Auth — Get Customer Token",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/rest/V1/integration/customer/token",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{customer_email}}\",\n  \"password\": \"{{customer_password}}\"\n}"
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.collectionVariables.set('customer_token', pm.response.text().replace(/\"/g, ''));",
+          "pm.test('Got customer token', () => pm.expect(pm.collectionVariables.get('customer_token')).to.not.be.empty);"
+        ]}
+      }]
+    },
+    {
+      "name": "0b. Auth — Get Admin Token",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/rest/V1/integration/admin/token",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"{{admin_user}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.collectionVariables.set('admin_token', pm.response.text().replace(/\"/g, ''));"
+        ]}
+      }]
+    },
+    {
+      "name": "1. Create Cart",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+        "url": "{{base_url}}/rest/V1/carts/mine"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.collectionVariables.set('quote_id', pm.response.text().replace(/\"/g, ''));"
+        ]}
+      }]
+    },
+    {
+      "name": "2. Add Item to Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{customer_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/rest/V1/carts/mine/items",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cartItem\": {\n    \"sku\": \"{{product_sku}}\",\n    \"qty\": 1,\n    \"quote_id\": \"{{quote_id}}\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "3. Set Shipping/Billing Address",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{customer_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/rest/V1/carts/mine/shipping-information",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"addressInformation\": {\n    \"shipping_address\": {\n      \"region\": \"California\",\n      \"region_id\": 12,\n      \"region_code\": \"CA\",\n      \"country_id\": \"US\",\n      \"street\": [\"123 Test St\"],\n      \"telephone\": \"5551234567\",\n      \"postcode\": \"90001\",\n      \"city\": \"Los Angeles\",\n      \"firstname\": \"Test\",\n      \"lastname\": \"User\",\n      \"email\": \"{{customer_email}}\"\n    },\n    \"billing_address\": {\n      \"region\": \"California\",\n      \"region_id\": 12,\n      \"region_code\": \"CA\",\n      \"country_id\": \"US\",\n      \"street\": [\"123 Test St\"],\n      \"telephone\": \"5551234567\",\n      \"postcode\": \"90001\",\n      \"city\": \"Los Angeles\",\n      \"firstname\": \"Test\",\n      \"lastname\": \"User\",\n      \"email\": \"{{customer_email}}\"\n    },\n    \"shipping_method_code\": \"flatrate\",\n    \"shipping_carrier_code\": \"flatrate\"\n  }\n}"
+        }
+      }
+    },
+    {
+      "name": "4. GET /V1/carts/mine/totals — verify handling_fee",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+        "url": "{{base_url}}/rest/V1/carts/mine/totals"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const body = pm.response.json();",
+          "pm.test('extension_attributes.handling_fee present', () => {",
+          "  pm.expect(body.extension_attributes).to.have.property('handling_fee');",
+          "});",
+          "pm.test('segment present when applicable', () => {",
+          "  const seg = body.total_segments.find(s => s.code === 'handling_fee');",
+          "  if (body.extension_attributes.handling_fee > 0) {",
+          "    pm.expect(seg).to.not.be.undefined;",
+          "    pm.expect(parseFloat(seg.value)).to.be.above(0);",
+          "  } else {",
+          "    pm.expect(seg).to.be.undefined; // no zero line",
+          "  }",
+          "});"
+        ]}
+      }]
+    },
+    {
+      "name": "5. POST /V1/carts/mine/payment-information — place order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{customer_token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{base_url}}/rest/V1/carts/mine/payment-information",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"paymentMethod\": { \"method\": \"checkmo\" },\n  \"billing_address\": {\n    \"region\": \"California\",\n    \"region_id\": 12,\n    \"region_code\": \"CA\",\n    \"country_id\": \"US\",\n    \"street\": [\"123 Test St\"],\n    \"telephone\": \"5551234567\",\n    \"postcode\": \"90001\",\n    \"city\": \"Los Angeles\",\n    \"firstname\": \"Test\",\n    \"lastname\": \"User\",\n    \"email\": \"{{customer_email}}\"\n  }\n}"
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.collectionVariables.set('order_id', pm.response.text().replace(/\"/g, ''));",
+          "pm.test('order id returned', () => pm.expect(pm.collectionVariables.get('order_id')).to.not.be.empty);"
+        ]}
+      }]
+    },
+    {
+      "name": "6. GET /V1/orders/{id} — verify order handling_fee",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+        "url": "{{base_url}}/rest/V1/orders/{{order_id}}"
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "const body = pm.response.json();",
+          "pm.test('order has extension_attributes.handling_fee', () => {",
+          "  pm.expect(body.extension_attributes).to.have.property('handling_fee');",
+          "});",
+          "pm.test('order has extension_attributes.base_handling_fee', () => {",
+          "  pm.expect(body.extension_attributes).to.have.property('base_handling_fee');",
+          "});"
+        ]}
+      }]
+    }
+  ]
+}

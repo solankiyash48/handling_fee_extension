@@ -1,0 +1,32 @@
+{
+    "quote": {
+        "column": {
+            "handling_fee": true,
+            "base_handling_fee": true
+        }
+    },
+    "quote_address": {
+        "column": {
+            "handling_fee": true,
+            "base_handling_fee": true
+        }
+    },
+    "sales_order": {
+        "column": {
+            "handling_fee": true,
+            "base_handling_fee": true
+        }
+    },
+    "sales_invoice": {
+        "column": {
+            "handling_fee": true,
+            "base_handling_fee": true
+        }
+    },
+    "sales_creditmemo": {
+        "column": {
+            "handling_fee": true,
+            "base_handling_fee": true
+        }
+    }
+}
